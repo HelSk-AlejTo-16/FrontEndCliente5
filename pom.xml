@@ -24,6 +24,11 @@
     </properties>
 
     <dependencies>
+    <dependency>
+    <groupId>com.h2database</groupId>
+    <artifactId>h2</artifactId>
+    <scope>test</scope>
+</dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -52,12 +57,11 @@
             </plugin>
 
             <!-- Plugin de SonarQube -->
-            <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>${sonar.maven.version}</version>
-            </plugin>
-
+         <plugin>
+    <groupId>org.sonarsource.scanner.maven</groupId>
+    <artifactId>sonar-maven-plugin</artifactId>
+    <version>5.5.0.6356</version>
+</plugin>
             <!-- Plugin de JaCoCo para cobertura de código en Java 21 -->
             <plugin>
                 <groupId>org.jacoco</groupId>
