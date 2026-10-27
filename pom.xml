@@ -18,17 +18,26 @@
         <!-- Compatibilidad completa con Java 21 -->
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <jacoco.version>0.8.12</jacoco.version>
-        <sonar.maven.version>4.0.0.4121</sonar.maven.version>
+        <sonar.maven.version>5.5.0.6356</sonar.maven.version>
         <!-- Conecta el reporte XML de JaCoCo con SonarQube -->
         <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <!-- Exclusiones de SonarQube: enfocar cobertura en controladores con lógica de negocio -->
+        <sonar.coverage.exclusions>
+            **/modelo/**,
+            **/*Application.java
+        </sonar.coverage.exclusions>
     </properties>
 
     <dependencies>
-    <dependency>
-    <groupId>com.h2database</groupId>
-    <artifactId>h2</artifactId>
-    <scope>test</scope>
-</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -57,11 +66,12 @@
             </plugin>
 
             <!-- Plugin de SonarQube -->
-         <plugin>
-    <groupId>org.sonarsource.scanner.maven</groupId>
-    <artifactId>sonar-maven-plugin</artifactId>
-    <version>5.5.0.6356</version>
-</plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar.maven.version}</version>
+            </plugin>
+
             <!-- Plugin de JaCoCo para cobertura de código en Java 21 -->
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -78,7 +88,7 @@
                     <!-- 2. Genera el reporte XML y HTML después de los tests -->
                     <execution>
                         <id>report</id>
-                        <phase>verify</phase>
+                        <phase>test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
