@@ -32,8 +32,16 @@ import com.mx.cbtis.modelo.Usuario;
 @Controller
 public class GestorController {
 	
-	@org.springframework.beans.factory.annotation.Autowired(required = false)
 	private RestTemplate restTemplate;
+
+	public GestorController() {
+		this(new RestTemplate());
+	}
+
+	@org.springframework.beans.factory.annotation.Autowired(required = false)
+	public GestorController(RestTemplate restTemplate) {
+		this.restTemplate = (restTemplate != null) ? restTemplate : new RestTemplate();
+	}
 
 	public RestTemplate getRestTemplate() {
 		return (this.restTemplate != null) ? this.restTemplate : new RestTemplate();

@@ -642,11 +642,13 @@ public class GestorPruebasAutomaticasTest {
 
     @Test
     @Order(31)
-    @DisplayName("AUT-E20: Getters y Setters directos del controlador")
+    @DisplayName("AUT-E20: Constructores, Getters y Setters directos del controlador")
     void test_AUT_E20_getterSetterRestTemplate() {
         GestorController controller = new GestorController();
         org.junit.jupiter.api.Assertions.assertNotNull(controller.getRestTemplate());
         RestTemplate custom = new RestTemplate();
+        GestorController controllerParam = new GestorController(custom);
+        org.junit.jupiter.api.Assertions.assertSame(custom, controllerParam.getRestTemplate());
         controller.setRestTemplate(custom);
         org.junit.jupiter.api.Assertions.assertSame(custom, controller.getRestTemplate());
     }
