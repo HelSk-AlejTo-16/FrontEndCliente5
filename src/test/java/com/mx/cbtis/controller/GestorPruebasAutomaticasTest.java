@@ -652,4 +652,101 @@ public class GestorPruebasAutomaticasTest {
         controller.setRestTemplate(custom);
         org.junit.jupiter.api.Assertions.assertSame(custom, controller.getRestTemplate());
     }
+
+    @Test
+    @Order(32)
+    @DisplayName("AUT-E21: Vista /inicio retorna modelo y template 'inicio'")
+    void test_AUT_E21_getInicio() throws Exception {
+        mockMvc.perform(get("/inicio"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("inicio"))
+                .andExpect(model().attributeExists("proyectos"));
+    }
+
+    @Test
+    @Order(33)
+    @DisplayName("AUT-E22: Guardar proyecto nuevo (id_proyecto nulo -> addProyecto)")
+    void test_AUT_E22_saveProyecto_nuevo() throws Exception {
+        when(restTemplate.postForEntity(eq("http://localhost:8081/addProyecto"), any(), eq(Object.class)))
+                .thenReturn(ResponseEntity.ok("ok"));
+
+        mockMvc.perform(post("/saveProyecto")
+                .param("nombre", "Proyecto Nuevo")
+                .param("descripcion", "Desc"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/inicio"));
+    }
+
+    @Test
+    @Order(34)
+    @DisplayName("AUT-E23: Eliminar proyecto exitoso sin excepción")
+    void test_AUT_E23_eliminarProyecto_exito() throws Exception {
+        when(restTemplate.exchange(eq("http://localhost:8081/deleteProyecto"), eq(org.springframework.http.HttpMethod.DELETE), any(), eq(Object.class)))
+                .thenReturn(ResponseEntity.ok("ok"));
+
+        mockMvc.perform(post("/eliminarProyecto")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"id_proyecto\":10}"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/inicio"));
+    }
+
+    @Test
+    @Order(35)
+    @DisplayName("AUT-E24: Guardar tarea nueva (id_tarea nulo -> addTareas)")
+    void test_AUT_E24_saveTarea_nueva() throws Exception {
+        when(restTemplate.postForEntity(eq("http://localhost:8081/addTareas"), any(), eq(Object.class)))
+                .thenReturn(ResponseEntity.ok("ok"));
+
+        mockMvc.perform(post("/saveTarea")
+                .param("nombre", "Nueva Tarea"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/proyecto"));
+    }
+
+    @Test
+    @Order(36)
+    @DisplayName("AUT-E25: Guardar comentario exitoso (200 OK)")
+    void test_AUT_E25_saveComentario_exito() throws Exception {
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("resultado", 1);
+        when(restTemplate.postForEntity(eq("http://localhost:8081/addComentario"), any(), eq(Object.class)))
+                .thenReturn(ResponseEntity.ok(resp));
+
+        mockMvc.perform(post("/saveComentario")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"id_tarea\":1,\"texto_comentario\":\"Buen progreso\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultado").value(1));
+    }
+
+    @Test
+    @Order(37)
+    @DisplayName("AUT-E26: Eliminar tarea exitoso sin excepción")
+    void test_AUT_E26_eliminarTarea_exito() throws Exception {
+        when(restTemplate.exchange(eq("http://localhost:8081/deleteTareas"), eq(org.springframework.http.HttpMethod.DELETE), any(), eq(Object.class)))
+                .thenReturn(ResponseEntity.ok("ok"));
+
+        mockMvc.perform(post("/eliminarTarea")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"id_tarea\":5}"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/proyecto"));
+    }
+
+    @Test
+    @Order(38)
+    @DisplayName("AUT-E27: Cambios en tarea nueva (id_tarea nulo -> addTareas)")
+    void test_AUT_E27_cambiosTareas_nueva() throws Exception {
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("resultado", 1);
+        when(restTemplate.postForEntity(eq("http://localhost:8081/addTareas"), any(), eq(Object.class)))
+                .thenReturn(ResponseEntity.ok(resp));
+
+        mockMvc.perform(post("/cambiosTareas")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"nombre\":\"Tarea sin ID\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultado").value(1));
+    }
 }
