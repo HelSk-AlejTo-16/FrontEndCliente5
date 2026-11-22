@@ -42,7 +42,7 @@ function validarLogin(){
 					toast.show();
 				}else{
 					localStorage.setItem("usuario", JSON.stringify(data));
-					window.location.href = 'inicio';
+					window.location.href = '/inicio';
 				}
 			},
 			error: function(xhr){

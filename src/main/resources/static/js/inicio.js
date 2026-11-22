@@ -70,7 +70,7 @@ function eliminarProyecto(idProyecto){
 		data : JSON.stringify({id_proyecto: idProyecto}),
 		type : "POST",
 		success: function(){
-			window.location.href = 'inicio';
+			window.location.href = '/inicio';
 		}
 	});
     

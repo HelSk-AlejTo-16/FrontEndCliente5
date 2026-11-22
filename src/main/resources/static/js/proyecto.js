@@ -14,8 +14,9 @@ $(document).ready(function() {
 	document.getElementById("inicial").innerHTML = inicial;
 	
 	var urlParams = new URLSearchParams(window.location.search);
-	var id = urlParams.get('id_proyecto');
-	var id_proyecto = Number(id);
+	var rawId = urlParams.get('id_proyecto');
+	var parsedId = Number.parseInt(rawId, 10);
+	var id_proyecto = Number.isInteger(parsedId) && parsedId > 0 ? parsedId : 0;
 	console.log(id_proyecto);
 	document.getElementById("IdProyectoURL").value = id_proyecto;
 	
@@ -284,10 +285,30 @@ function Fechas(){
 	}
 }
 
+function redirigirAProyecto(id) {
+	var rawId = id;
+	if (rawId === undefined || rawId === null || rawId === "") {
+		var inputEl = document.getElementById("IdProyectoURL");
+		rawId = inputEl ? inputEl.value : null;
+	}
+	var numId = Number.parseInt(rawId, 10);
+	if (Number.isInteger(numId) && numId > 0) {
+		var safePath = "/proyecto?id_proyecto=" + encodeURIComponent(numId);
+		if (safePath.startsWith("/") && !safePath.startsWith("//") && !safePath.toLowerCase().startsWith("javascript:")) {
+			window.location.href = safePath;
+			return;
+		}
+	}
+	window.location.href = "/inicio";
+}
+
 function validarTarea(){
 	var urlParams = new URLSearchParams(window.location.search);
-	var id = urlParams.get('id_proyecto') || document.getElementById("IdProyectoURL").value;
-	var id_proyecto = Number(id);
+	var rawId = urlParams.get('id_proyecto') || (document.getElementById("IdProyectoURL") ? document.getElementById("IdProyectoURL").value : "");
+	var id_proyecto = Number.parseInt(rawId, 10);
+	if (!Number.isInteger(id_proyecto) || id_proyecto <= 0) {
+		return;
+	}
 	var nombre = $("#inputTarea").val();
 	if (!nombre || nombre.trim() === "") {
 		return;
@@ -300,17 +321,18 @@ function validarTarea(){
 		type : "POST",
 		success: function(data){
 			console.log(data);
-			var id = document.getElementById("IdProyectoURL").value || id_proyecto;
-			var url = `proyecto?id_proyecto=${id}`;
-			window.location.href= url;
+			redirigirAProyecto(id_proyecto);
 		}
 	});
 }
 
 function validarTarea2(){
 	var urlParams = new URLSearchParams(window.location.search);
-	var id = urlParams.get('id_proyecto') || document.getElementById("IdProyectoURL").value;
-	var id_proyecto = Number(id);
+	var rawId = urlParams.get('id_proyecto') || (document.getElementById("IdProyectoURL") ? document.getElementById("IdProyectoURL").value : "");
+	var id_proyecto = Number.parseInt(rawId, 10);
+	if (!Number.isInteger(id_proyecto) || id_proyecto <= 0) {
+		return;
+	}
 	var nombre = $("#inputTarea2").val();
 	if (!nombre || nombre.trim() === "") {
 		return;
@@ -323,17 +345,18 @@ function validarTarea2(){
 		type : "POST",
 		success: function(data){
 			console.log(data);
-			var id = document.getElementById("IdProyectoURL").value || id_proyecto;
-			var url = `proyecto?id_proyecto=${id}`;
-			window.location.href= url;
+			redirigirAProyecto(id_proyecto);
 		}
 	});
 }
 
 function validarTarea3(){
 	var urlParams = new URLSearchParams(window.location.search);
-	var id = urlParams.get('id_proyecto') || document.getElementById("IdProyectoURL").value;
-	var id_proyecto = Number(id);
+	var rawId = urlParams.get('id_proyecto') || (document.getElementById("IdProyectoURL") ? document.getElementById("IdProyectoURL").value : "");
+	var id_proyecto = Number.parseInt(rawId, 10);
+	if (!Number.isInteger(id_proyecto) || id_proyecto <= 0) {
+		return;
+	}
 	var nombre = $("#inputTarea3").val();
 	if (!nombre || nombre.trim() === "") {
 		return;
@@ -346,9 +369,7 @@ function validarTarea3(){
 		type : "POST",
 		success: function(data){
 			console.log(data);
-			var id = document.getElementById("IdProyectoURL").value || id_proyecto;
-			var url = `proyecto?id_proyecto=${id}`;
-			window.location.href= url;
+			redirigirAProyecto(id_proyecto);
 		}
 	});
 }
@@ -361,9 +382,7 @@ function eliminarTarea(id_tarea){
 		data : JSON.stringify({id_tarea:id_tarea}),
 		type : "POST",
 		success: function(){
-			var id = document.getElementById("IdProyectoURL").value;
-			var url = `proyecto?id_proyecto=${id}`;
-			window.location.href= url;
+			redirigirAProyecto();
 		}
 	});
 }
@@ -423,9 +442,8 @@ function verificarComentario(){
 		type : "POST",
 		success: function(data){
 			console.log(data);
-			var id = document.getElementById("IdProyectoURL").value;
-			var url = `proyecto?id_proyecto=${id}`;
-            window.location.href= url;}
+			redirigirAProyecto();
+		}
 	})
 }*/
 
@@ -457,9 +475,7 @@ function guardarComentario(){
                 // Manejar la respuesta del servidor según sea necesario
                 console.log('Comentario guardado exitosamente');
                 // Puedes actualizar la UI si es necesario
-                var id = document.getElementById("IdProyectoURL").value;
-				var url = `proyecto?id_proyecto=${id}`;
-	            window.location.href= url;
+                redirigirAProyecto();
             },
             error: function(error) {
                 console.error('Error al guardar el comentario:', error);
@@ -523,7 +539,7 @@ function comentarios(idTarea){
 }
 
 function IrInicio(){
-	window.location.href = 'inicio';
+	window.location.href = '/inicio';
 }
 
 function obtenerInfo(datos, objetivo, nombre) {

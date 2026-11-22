@@ -1,0 +1,8 @@
+﻿target/
+reportes/
+.env
+.env.*
+.idea/
+.vscode/
+*.jar
+*.class
